@@ -1,9 +1,11 @@
+#Date: 12/09/2020
+#Class: CS6821
+#Project: A Information Retrieval System
+#Author(s): Mohammad Jaminur Islam
 import math
 import operator
-import time
 from math import log
 import pandas as pd
-from nltk import word_tokenize
 from sklearn.feature_extraction.text import TfidfVectorizer
 import numpy as np
 from data_loader.data import Data
@@ -52,7 +54,9 @@ def termFrequency(term, doc):
     """
     # Splitting the document into individual terms
     # Number of times the term occurs in the document
+    print(term)
     term_in_document = doc.count(term.lower())
+    print("count",term_in_document)
     # Total number of terms in the document
     len_of_document = float(len(doc))
     # Normalized Term Frequency
@@ -152,7 +156,7 @@ def matching_score(tokens,tf_idf):
             try:
                 query_weights[row.doc_id] += row.tf_idf
             except:
-                query_weights[row.doc_id] = row.tf_idf
+                query_weights.setdefault(row.doc_id, row.tf_idf)
     query_weights = sorted(query_weights.items(), key=lambda x: x[1], reverse=True)
     top_document = dict()
     if (len(query_weights) > THRESHOLD):
@@ -167,10 +171,14 @@ def matching_score(tokens,tf_idf):
         print("Top ", THRESHOLD, " Document ranking")
         print(top_document)
         return top_document
-    print("All retrieved documents ranking")
-    print("Query Weight")
-    print(query_weights)
-    return query_weights
+    else:
+        for i in query_weights[:len(query_weights)]:  # showing top 20 results
+            # tmp = {"doc_id":i[0], "serial":index, "rank":i[1]}
+            top_document[i[0]] = i[1]
+        print("All retrieved documents ranking")
+        print("Query Weight")
+        print(top_document)
+        return top_document
     # m_score_ary_for_doc = []
     # for i in query_weights[:k]:
     #     m_score_ary_for_doc.append(i[0])
@@ -350,7 +358,7 @@ def main():
                     relevant_docs_qId = data.rel_set[query_id]
                     print("relevant Documents: ")
                     print(relevant_docs_qId)
-                    query_result_qId =  matching_score(query_tokenize,tf_idf_frame)
+                    query_result_qId =  matching_score(query_by_id,tf_idf_frame)
                     evaluator.evaluate_tf_idf_MS(relevant_docs_qId, query_result_qId)
             elif ((selection) == str(3)): #3 for tf_idf cosine similarity ranking model
                 query_similarity = calculate_cosine_similarity(query_tokenize, idx.inverted_index, dlt.document_table,tf_idf_frame)  # 10 = the number of ranking we are seeking can be any number
@@ -363,13 +371,13 @@ def main():
                     print("Select a Query ID 1-111 to test the Peformance of the Model comparing actual relevance")
                     query_id = input()
                     query_by_id = processor.tokenized_query_set[query_id]
-                    # print("Query for Id:",query_id)
+                    print("Query for Id:",query_id)
                     print("Query: ", data.qry_set[query_id])
                     relevant_docs_qId = data.rel_set[query_id]
                     print("relevant Documents: ")
                     print(relevant_docs_qId)
                     query_result_qId = calculate_cosine_similarity(query_by_id, idx.inverted_index, dlt.document_table,tf_idf_frame)
-                    evaluator.evaluate_tf_idf_MS(relevant_docs_qId, query_result_qId)
+                    evaluator.evaluate_tf_idf_cosine(relevant_docs_qId, query_result_qId)
         else:
             print("Thank you for using our search engine. Bye")
             break

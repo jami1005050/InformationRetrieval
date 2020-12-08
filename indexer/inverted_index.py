@@ -1,3 +1,7 @@
+#Date: 12/09/2020
+#Class: CS6821
+#Project: A Information Retrieval System
+#Author(s): Mohammad Jaminur Islam
 class Inverted_Index:
     def __init__(self):
         self.inverted_index = dict()
@@ -33,8 +37,6 @@ class Inverted_Index:
             # raise LookupError('%s not in inverted_index' % str(word))
             print('%s not in inverted_index' % str(word))
 
-        # frequency of word in inverted_index, i.e. number of documents that contain word
-
     def get_index_frequency(self, word):
         if word in self.inverted_index:
             return len(self.inverted_index[word])
@@ -43,12 +45,8 @@ class Inverted_Index:
             # raise LookupError('%s not in inverted_index' % word)
 
 class Document_Length_Table:
-
     def __init__(self):
         self.document_table = dict()
-
-    # def __len__(self):
-    #     return len(self.table)
 
     def map_document_and_length(self, doc_id, length):
         self.document_table[doc_id] = length
@@ -58,7 +56,6 @@ class Document_Length_Table:
             return self.document_table[doc_id]
         else:
             print('%s not found in table' % str(doc_id))
-            # raise LookupError('%s not found in table' % str(doc_id))
 
     def get_average_length(self):
         sum = 0
